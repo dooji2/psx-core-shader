@@ -1,0 +1,29 @@
+screen.INFO=PSX-Core Shader
+screen.DITHER=Image Dither
+screen.COLOR=Color & Banding
+screen.GEOMETRY=Geometry Warp
+screen.FOG=Fog Settings
+
+option.psx_enable_dither=Dither
+option.psx_dither_strength=Dither Strength
+option.psx_pattern_scale=Bayer Scale
+option.psx_color_steps=Color Steps
+option.psx_post_scale=Composite Scale
+option.psx_post_contrast=Composite Contrast
+option.psx_light_steps=Gouraud Levels
+option.psx_warp_limit=Affine Limit (px)
+option.psx_snap_world_near=Snap Near
+option.psx_snap_world_far=Snap Far
+option.psx_snap_curve=Snap Curve
+option.psx_snap_jitter=Snap Jitter
+option.psx_snap_depth_ref=Snap Depth Ref
+option.psx_fog_enable=Fog
+option.psx_fog_distance=Fog Distance
+option.psx_fog_noise=Fog Noise
+
+option.INFO=PSX-Core (Shader)
+value.INFO.0.0=§aby dooji
+value.psx_enable_dither.0.0=Off
+value.psx_enable_dither.1.0=On
+value.psx_fog_enable.0.0=Off
+value.psx_fog_enable.1.0=On

@@ -1,0 +1,20 @@
+#define INFO 0.0 // [0.0]
+#define psx_enable_dither 1.0 // [0.0 1.0]
+#define psx_dither_strength 2.5 // [1.0 1.5 2.0 2.5 3.0 3.5 4.0]
+#define psx_pattern_scale 2.0 // [1.0 1.5 2.0 2.5 3.0 4.0]
+#define psx_color_steps 31.0 // [8.0 12.0 16.0 24.0 31.0 32.0]
+
+#define psx_post_scale 0.25 // [0.1 0.167 0.25 0.33 0.5 0.67 1.0]
+#define psx_post_contrast 0.2 // [0.0 0.05 0.1 0.15 0.2 0.25 0.3]
+#define psx_light_steps 32.0 // [8.0 16.0 24.0 32.0 48.0]
+
+#define psx_snap_world_near 0.03 // [0.005 0.01 0.02 0.03 0.04]
+#define psx_snap_world_far 0.06 // [0.01 0.02 0.04 0.05 0.06]
+#define psx_snap_depth_ref 96.0 // [32.0 64.0 96.0 128.0 192.0]
+#define psx_snap_curve 1.0 // [1.0 1.25 1.5 1.75 2.0]
+#define psx_snap_jitter 0.0 // [0.0 0.02 0.05 0.1 0.15 0.2]
+#define psx_warp_limit 1.0 // [0.25 0.5 1.0 1.5 2.0]
+
+#define psx_fog_enable 1.0 // [0.0 1.0]
+#define psx_fog_distance 16.0 // [16.0 32.0 48.0 64.0 96.0]
+#define psx_fog_noise 0.0005 // [0.0 0.00025 0.0005 0.001 0.002]

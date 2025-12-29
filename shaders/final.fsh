@@ -1,0 +1,130 @@
+#version 120
+
+#include "/settings.glsl"
+
+#ifndef psx_enable_dither
+#define psx_enable_dither 1.0
+#endif
+#ifndef psx_dither_strength
+#define psx_dither_strength 2.5
+#endif
+#ifndef psx_pattern_scale
+#define psx_pattern_scale 2.0
+#endif
+#ifndef psx_color_steps
+#define psx_color_steps 31.0
+#endif
+#ifndef psx_post_scale
+#define psx_post_scale 1.0
+#endif
+#ifndef psx_post_contrast
+#define psx_post_contrast 0.0
+#endif
+#ifndef psx_fog_enable
+#define psx_fog_enable 1.0
+#endif
+
+#ifndef psx_fog_distance
+#define psx_fog_distance 120.0
+#endif
+#ifndef psx_fog_noise
+#define psx_fog_noise 0.1
+#endif
+#ifndef psx_fog_density
+#define psx_fog_density 1.0
+#endif
+
+uniform sampler2D texture;
+uniform sampler2D depthtex0;
+uniform sampler2D gaux4;
+uniform float viewWidth;
+uniform float viewHeight;
+uniform float near;
+uniform float far;
+
+varying vec4 vertexColor;
+varying vec2 baseUV;
+
+const int BAYER_4X4[16] = int[](0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
+
+float bayer(vec2 pos) {
+    vec2 scaled = floor(pos / psx_pattern_scale);
+    int xi = int(scaled.x) & 3;
+    int yi = int(scaled.y) & 3;
+    return float(BAYER_4X4[yi * 4 + xi]) / 16.0;
+}
+
+float getLinearDepth(float depth) {
+    return (2.0 * near * far) / (far + near - (depth * 2.0 - 1.0) * (far - near));
+}
+
+vec3 applyPS1ColorDepth(vec3 color, vec2 fragCoord) {
+    float dither = 0.0;
+    if (psx_enable_dither > 0.5) {
+        dither = bayer(fragCoord) * psx_dither_strength;
+    }
+
+    color = floor(color * psx_color_steps + dither);
+    return color / psx_color_steps;
+}
+
+vec3 applyContrast(vec3 color) {
+    if (psx_post_contrast <= 0.0) return color;
+    return clamp((color - 0.5) * (1.0 + psx_post_contrast) + 0.5, 0.0, 1.0);
+}
+
+float psxFogFactor(float depth, vec2 fragCoord) {
+    if (psx_fog_enable < 0.5) return 0.0;
+
+    float linearZ = getLinearDepth(depth);
+    float density = psx_fog_density / psx_fog_distance;
+    float fogT = 1.0 - exp(-pow(linearZ * density, 2.0));
+
+    fogT = clamp(fogT + (bayer(fragCoord) - 0.5) * psx_fog_noise, 0.0, 1.0);
+    return fogT;
+}
+
+void main() {
+    vec2 screenRes = vec2(viewWidth, viewHeight);
+    vec2 targetRes = max(screenRes * max(psx_post_scale, 0.01), vec2(1.0));
+    vec2 screenUV = gl_FragCoord.xy / screenRes;
+
+    vec2 quantizedUV = floor(screenUV * targetRes + 0.5) / targetRes;
+
+    vec3 col = texture2D(texture, quantizedUV).rgb;
+    float depth = texture2D(depthtex0, quantizedUV).r;
+
+    vec4 weatherData = texture2D(gaux4, quantizedUV);
+    float weatherMask = weatherData.r;
+    float isSnow = weatherData.g;
+
+    col = applyContrast(col);
+    float fogT = psxFogFactor(depth, gl_FragCoord.xy);
+
+    float pierce = 0.0;
+    if (depth > 0.9999) {
+        float luma = dot(col, vec3(0.299, 0.587, 0.114));
+        pierce = smoothstep(0.92, 1.0, luma);
+    }
+
+    fogT = clamp(fogT - pierce, 0.0, 1.0);
+    if (psx_fog_enable > 0.5) {
+        col = mix(col, gl_Fog.color.rgb, fogT);
+    }
+
+    if (weatherMask > 0.01) {
+        vec3 targetColor;
+
+        if (isSnow > 0.5) {
+            targetColor = vec3(1.0);
+        } else {
+            targetColor = gl_Fog.color.rgb * 1.5;
+            targetColor = clamp(targetColor, 0.0, 1.0);
+        }
+
+        col = mix(col, targetColor, weatherMask * 0.5);
+    }
+
+    col = applyPS1ColorDepth(col, gl_FragCoord.xy);
+    gl_FragData[0] = vec4(col, 1.0);
+}
