@@ -11,7 +11,7 @@ A Minecraft shader that recreates PS1 visuals. Features:
 - Affine texture mapping
 - Fog (scary)
 
-Most of these are configurable via the shader settings! Only tested with Iris on 1.21.11.
+Most of these are configurable via the shader settings! Only thoroughly tested with Iris on 1.21.11 (works on other versions too but there may be bugs, will be fixed!).
 
 # Preview
 > See more on the Gallery page!
