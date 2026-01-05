@@ -4,6 +4,7 @@
 #include "/lib/psx_vertex.glsl"
 
 attribute float mc_Entity;
+attribute vec4 mc_midTexCoord;
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
@@ -13,6 +14,7 @@ varying vec2 texcoord;
 varying vec2 affineUV;
 varying vec2 lightmapUV;
 varying float affineW;
+varying vec4 tileBounds;
 
 void main() {
     vec3 viewPosition = (gl_ModelViewMatrix * gl_Vertex).xyz;
@@ -41,6 +43,10 @@ void main() {
 
     texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
     affineUV = texcoord * affineW;
+
+    vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).xy;
+    vec2 halfSize = abs(texcoord - midCoord);
+    tileBounds = vec4(midCoord - halfSize, midCoord + halfSize);
 
     lightmapUV = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
 }

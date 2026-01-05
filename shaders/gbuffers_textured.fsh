@@ -20,7 +20,6 @@
 #define psx_color_steps 31.0
 #endif
 
-uniform ivec2 atlasSize;
 uniform sampler2D texture;
 uniform sampler2D lightmap;
 
@@ -33,6 +32,7 @@ varying vec2 texcoord;
 varying vec2 affineUV;
 varying vec2 lightmapUV;
 varying float affineW;
+varying vec4 tileBounds;
 
 const int BAYER_4X4[16] = int[](0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5);
 
@@ -68,20 +68,20 @@ float computeFogFactor() {
 
 void main() {
     vec2 rawWarp = affineUV / max(affineW, 0.001);
+    vec2 tileSize = tileBounds.zw - tileBounds.xy;
+    vec2 limit = tileSize * 0.125 * psx_warp_limit;
     vec2 delta = rawWarp - texcoord;
-
-    vec2 texSize = vec2(max(float(atlasSize.x), 1.0), max(float(atlasSize.y), 1.0));
-    vec2 limit = vec2(psx_warp_limit) / texSize;
 
     delta = clamp(delta, -limit, limit);
     vec2 finalUV = texcoord + delta;
+    finalUV = clamp(finalUV, tileBounds.xy, tileBounds.zw);
 
     vec3 lightRaw = texture2D(lightmap, lightmapUV).rgb;
     vec3 smoothLit = (1.0 - blindness) * lightRaw;
     vec3 bandedLit = quantize(smoothLit);
     vec4 bandedVertexColor = quantize(vertexColor);
 
-    vec4 texSample = texture2D(texture, finalUV, -4.0);
+    vec4 texSample = texture2D(texture, finalUV);
     texSample.rgb = quantize(texSample.rgb);
 
     vec4 shadedColor = bandedVertexColor * vec4(bandedLit, 1.0) * texSample;
