@@ -14,9 +14,12 @@ void main() {
         discard;
     }
 
+    texel.a *= 0.45;
+
     float isSnow = (texel.r > 0.8) ? 1.0 : 0.0;
     float brightness = dot(texel.rgb, vec3(0.299, 0.587, 0.114));
-    vec3 grayscale = vec3(brightness);
+
+    vec3 grayscale = vec3(brightness) * 0.6;
 
     /* DRAWBUFFERS:07 */
     gl_FragData[0] = vec4(grayscale, texel.a);
