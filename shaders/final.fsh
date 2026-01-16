@@ -36,7 +36,11 @@
 
 uniform sampler2D texture;
 uniform sampler2D depthtex0;
+uniform sampler2D depthtex1;
 uniform sampler2D gaux4;
+
+uniform int isEyeInWater;
+
 uniform float viewWidth;
 uniform float viewHeight;
 uniform float near;
@@ -92,7 +96,13 @@ void main() {
     vec2 quantizedUV = floor(screenUV * targetRes + 0.5) / targetRes;
 
     vec3 col = texture2D(texture, quantizedUV).rgb;
-    float depth = texture2D(depthtex0, quantizedUV).r;
+
+    float depth;
+    if (isEyeInWater > 0) {
+        depth = texture2D(depthtex1, quantizedUV).r;
+    } else {
+        depth = texture2D(depthtex0, quantizedUV).r;
+    }
 
     vec4 weatherData = texture2D(gaux4, quantizedUV);
     float weatherMask = weatherData.r;
