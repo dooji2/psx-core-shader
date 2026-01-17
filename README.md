@@ -26,3 +26,5 @@ Without fog:
 
 In a cave:
 ![PSX-Core Shader in a dark-ish cave](https://cdn.modrinth.com/data/cached_images/d8a4375296e94cc91df4696d64946f8c6f855ceb.png)
+
+> Modpacks are welcome to use this shader, only via adding it as a dependency to your modpack. Do not reupload or repack this shader.
