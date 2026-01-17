@@ -1,3 +1,5 @@
+#extension GL_EXT_gpu_shader4 : require
+
 #define INFO 0.0 // [0.0]
 #define psx_enable_dither 1.0 // [0.0 1.0]
 #define psx_dither_strength 2.5 // [1.0 1.5 2.0 2.5 3.0 3.5 4.0]
