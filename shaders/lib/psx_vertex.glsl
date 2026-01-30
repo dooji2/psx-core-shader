@@ -22,4 +22,8 @@ vec3 QuantizeWorld(vec3 worldPos, float snapNear, float snapFar, float snapCurve
     return snapped;
 }
 
+float QuantizeLight(float value, float steps) {
+    return floor(value * steps + 0.5) / steps;
+}
+
 #endif

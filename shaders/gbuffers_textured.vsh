@@ -39,6 +39,7 @@ void main() {
         1.0
     );
 
+    lightFactor = QuantizeLight(lightFactor, psx_light_steps);
     vertexColor = vec4(gl_Color.rgb * lightFactor, gl_Color.a);
 
     texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
