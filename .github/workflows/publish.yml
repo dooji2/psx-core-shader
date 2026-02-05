@@ -1,0 +1,61 @@
+name: Publish PSX-Core Shader
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number"
+        required: true
+      changelog:
+        description: "Changelog"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create shader ZIP
+        run: |
+          ZIP_NAME="PSX-Core v${{ inputs.version }}.zip"
+
+          zip -r "$ZIP_NAME" \
+            shaders \
+            README.md \
+            LICENSE \
+            -x "*.git*" \
+            -x ".github/*"
+
+          ls -lh "$ZIP_NAME"
+
+      - name: Publish to Modrinth & CurseForge
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: 424Wbdmo
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          curseforge-id: 1414712
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          files: PSX-Core v${{ inputs.version }}.zip
+
+          name: PSX-Core Shader v${{ inputs.version }}
+          version: ${{ inputs.version }}
+          version-type: release
+          changelog: ${{ inputs.changelog }}
+
+          loaders: |
+            optifine
+            iris
+
+          game-versions: |
+            >=1.8
+
+          retry-attempts: 2
+          fail-mode: fail
