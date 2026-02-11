@@ -38,8 +38,8 @@ const int BAYER_4X4[16] = int[](0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 1
 
 float bayer(vec2 pos) {
     vec2 scaled = floor(pos / psx_pattern_scale);
-    int xi = int(scaled.x) & 3;
-    int yi = int(scaled.y) & 3;
+    int xi = int(mod(scaled.x, 4.0));
+    int yi = int(mod(scaled.y, 4.0));
     return float(BAYER_4X4[yi * 4 + xi]) / 16.0;
 }
 
