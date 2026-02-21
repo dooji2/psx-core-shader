@@ -16,7 +16,6 @@
 #endif
 
 uniform sampler2D texture;
-uniform float blindness;
 uniform int isEyeInWater;
 
 varying vec4 vertexColor;
@@ -46,8 +45,7 @@ float computeFogFactor() {
 }
 
 void main() {
-    vec3 visibility = vec3(1.0 - blindness);
-    vec4 shadedColor = vertexColor * vec4(visibility, 1.0) * texture2D(texture, baseUV);
+    vec4 shadedColor = vertexColor * texture2D(texture, baseUV);
     shadedColor.rgb = applyOrderedDither(shadedColor.rgb, gl_FragCoord.xy);
     float fogFactor = computeFogFactor();
     shadedColor.rgb = mix(shadedColor.rgb, gl_Fog.color.rgb, fogFactor);

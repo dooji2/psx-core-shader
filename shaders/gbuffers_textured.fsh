@@ -24,7 +24,6 @@ uniform sampler2D texture;
 uniform sampler2D lightmap;
 
 uniform vec4 entityColor;
-uniform float blindness;
 uniform int isEyeInWater;
 
 varying vec4 vertexColor;
@@ -77,7 +76,7 @@ void main() {
     finalUV = clamp(finalUV, tileBounds.xy, tileBounds.zw);
 
     vec3 lightRaw = texture2D(lightmap, lightmapUV).rgb;
-    vec3 smoothLit = (1.0 - blindness) * lightRaw;
+    vec3 smoothLit = lightRaw;
     vec3 bandedLit = quantize(smoothLit);
     vec4 bandedVertexColor = quantize(vertexColor);
 

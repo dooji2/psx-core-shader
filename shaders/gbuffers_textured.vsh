@@ -26,7 +26,7 @@ void main() {
     gl_Position = gl_ProjectionMatrix * viewSnapped;
 
     affineW = gl_Position.w;
-    gl_FogFragCoord = length(worldPosition);
+    gl_FogFragCoord = length(viewSnapped.xyz);
 
     vec3 viewNormal = gl_NormalMatrix * gl_Normal;
     vec3 worldNormal = (mc_Entity == 1.0)

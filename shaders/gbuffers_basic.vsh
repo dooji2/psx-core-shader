@@ -14,7 +14,7 @@ void main() {
     worldPosition = QuantizeWorld(worldPosition, psx_snap_world_near, psx_snap_world_far, psx_snap_curve, psx_snap_jitter, psx_snap_depth_ref);
     vec4 viewSnapped = gbufferModelView * vec4(worldPosition, 1.0);
     gl_Position = gl_ProjectionMatrix * viewSnapped;
-    gl_FogFragCoord = length(worldPosition);
+    gl_FogFragCoord = length(viewSnapped.xyz);
     vec3 viewNormal = gl_NormalMatrix * gl_Normal;
     vec3 worldNormal = (gbufferModelViewInverse * vec4(viewNormal, 0.0)).xyz;
 

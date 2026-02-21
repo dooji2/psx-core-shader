@@ -15,7 +15,6 @@
 #define psx_color_steps 31.0
 #endif
 
-uniform float blindness;
 uniform int isEyeInWater;
 
 varying vec4 vertexColor;
@@ -48,5 +47,5 @@ void main() {
     shadedColor.rgb = applyOrderedDither(shadedColor.rgb, gl_FragCoord.xy);
     float fogFactor = computeFogFactor();
     shadedColor.rgb = mix(shadedColor.rgb, gl_Fog.color.rgb, fogFactor);
-    gl_FragData[0] = shadedColor * vec4(vec3(1.0 - blindness), 1.0);
+    gl_FragData[0] = shadedColor;
 }
