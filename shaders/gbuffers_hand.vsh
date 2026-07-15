@@ -17,7 +17,7 @@ varying vec4 tileBounds;
 
 void main() {
     vec3 viewPosition = (gl_ModelViewMatrix * gl_Vertex).xyz;
-    gl_Position = QuantizeScreen(gl_ProjectionMatrix * vec4(viewPosition, 1.0), psx_vertex_resolution);
+    gl_Position = gl_ProjectionMatrix * vec4(viewPosition, 1.0);
 
     affineW = gl_Position.w;
     gl_FogFragCoord = length(viewPosition);

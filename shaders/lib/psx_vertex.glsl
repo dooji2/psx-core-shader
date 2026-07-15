@@ -4,22 +4,17 @@
 uniform float viewWidth;
 uniform float viewHeight;
 
-vec3 QuantizeWorld(vec3 worldPos, float snapNear, float snapFar, float snapCurve, float snapJitter, float depthRef) {
-    float depth = length(worldPos);
-    float t = pow(clamp(depth / max(depthRef, 1e-3), 0.0, 1.0), snapCurve);
-    float stepWorld = mix(snapNear, snapFar, t);
+vec4 QuantizeScreen(vec4 clipPos, float snapRes) {
+    if (psx_enable_vertex_snap < 0.5) return clipPos;
 
-    vec3 cell = floor(worldPos);
-    float hash = fract(sin(dot(cell.xy, vec2(12.9898, 78.233)) + cell.z * 37.0) * 43758.5453);
-    vec3 offset = vec3(hash - 0.5) * 0.2;
+    float aspectRatio = viewWidth / max(viewHeight, 1.0);
+    vec2 screenRes = vec2(snapRes * aspectRatio, snapRes);
+    vec2 ndc = clipPos.xy / clipPos.w;
+    vec2 ndcGrid = max(screenRes * 0.5, vec2(1.0));
+    vec2 snappedNdc = floor(ndc * ndcGrid + 0.5) / ndcGrid;
 
-    vec3 snapped = floor(worldPos / stepWorld + 0.5 + offset) * stepWorld;
-    if (snapJitter > 0.0) {
-        float j = (fract(sin(dot(worldPos.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * snapJitter * stepWorld;
-        snapped.xy += vec2(j);
-    }
-
-    return snapped;
+    clipPos.xy = snappedNdc * clipPos.w;
+    return clipPos;
 }
 
 float QuantizeLight(float value, float steps) {
